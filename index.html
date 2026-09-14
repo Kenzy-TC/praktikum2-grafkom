@@ -1,120 +1,110 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>WebGL2 Primitive Playground</title>
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        #canvas-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        canvas {
-            border: 2px solid #555;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            cursor: crosshair;
-        }
-        #sidebar {
-            width: 320px;
-            background-color: #2c3e50;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
-        }
-        .panel {
-            background-color: #34495e;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        h2, h3 { margin-top: 0; font-size: 16px; color: #ecf0f1; border-bottom: 1px solid #7f8c8d; padding-bottom: 5px; }
-        
-        /* HUD Style */
-        .hud-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #bdc3c7;
-        }
-        .hud-value { font-family: monospace; color: #f1c40f; font-weight: bold; }
-        
-        /* Controls */
-        button {
-            background-color: #3498db; color: white; border: none; padding: 8px; margin: 3px; 
-            border-radius: 4px; cursor: pointer; transition: 0.2s;
-        }
-        button:hover { background-color: #2980b9; }
-        .color-btn { width: 30px; height: 30px; border-radius: 50%; display: inline-block; border: 2px solid #fff; cursor: pointer;}
-        select, input { padding: 5px; width: 100%; box-sizing: border-box; margin-top: 5px; }
-        
-        .instructions { font-size: 12px; color: #95a5a6; line-height: 1.4; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphics Playground - Praktikum 2</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="canvas-container">
-        <!-- Canvas WebGL -->
-        <canvas id="glCanvas" width="800" height="600"></canvas>
+  <aside class="sidebar">
+    <h2>Modul Praktikum</h2>
+    <nav class="nav-list" aria-label="Navigasi modul">
+      <a href="../index.html" class="nav-item">Beranda Portal</a>
+      <a href="../Week01/praktikum1.html" class="nav-item">Dasar Canvas</a>
+      <a href="praktikum2.html" class="nav-item active">WebGL Primitives</a>
+      <a href="#" class="nav-item locked">Transformasi Objek</a>
+    </nav>
+    <div class="sidebar-note">
+      <span class="note-dot"></span>
+      <p>Eksperimen interaktif<br>WebGL 2.0</p>
     </div>
+  </aside>
 
-    <div id="sidebar">
-        <!-- Challenge F: Simple HUD -->
-        <div class="panel">
-            <h2>📊 HUD (Heads Up Display)</h2>
-            <div class="hud-item"><span>FPS</span> <span id="hud-fps" class="hud-value">0</span></div>
-            <div class="hud-item"><span>Jumlah Primitive</span> <span id="hud-prim" class="hud-value">0</span></div>
-            <div class="hud-item"><span>Mouse (NDC)</span> <span id="hud-mouse" class="hud-value">(0.00, 0.00)</span></div>
-            <div class="hud-item"><span>Draw Mode (Spawn)</span> <span id="hud-mode" class="hud-value">TRIANGLES</span></div>
-        </div>
+  <main class="main-content">
+    <div class="content-wrapper">
+      <header>
+        <div class="dept-badge">Teknik Informatika / Week 02</div>
+        <h1>Graphics <span>Playground</span></h1>
+        <p>Primitive WebGL, interpolasi warna, animasi, dan input interaktif.</p>
+      </header>
 
-        <div class="panel">
-            <!-- Challenge A & C: Primitive Selector & Spawning -->
-            <h3>🛠️ Spawn Controls</h3>
-            <label for="shapeSelect">Pilih Bentuk:</label>
-            <select id="shapeSelect">
-                <option value="TRIANGLES">Triangle (Solid)</option>
-                <option value="RECTANGLE">Rectangle (Solid)</option>
-                <option value="LINE_LOOP">Hexagon (Line Loop)</option>
-            </select>
-            <p class="instructions"><em>Klik pada Canvas untuk memunculkan (spawn) bentuk di atas.</em></p>
-        </div>
+      <section class="team-container" aria-label="Informasi praktikum">
+        <article class="team-card">
+          <div class="avatar">MN</div>
+          <div class="team-info"><span class="name">Mario Napitupulu</span><span class="nim">5025241085</span></div>
+        </article>
+        <article class="team-card">
+          <div class="avatar">NY</div>
+          <div class="team-info"><span class="name">Nathanael Oliver A. Y.</span><span class="nim">5025241109</span></div>
+        </article>
+      </section>
 
-        <div class="panel">
-            <!-- Challenge B: Color Control -->
-            <h3>🎨 Color Control (Spawn)</h3>
-            <div style="display: flex; gap: 10px; margin-top: 5px;">
-                <div class="color-btn" style="background: red;" onclick="setCurrentColor(1,0,0,1)"></div>
-                <div class="color-btn" style="background: lime;" onclick="setCurrentColor(0,1,0,1)"></div>
-                <div class="color-btn" style="background: blue;" onclick="setCurrentColor(0,0,1,1)"></div>
-                <div class="color-btn" style="background: cyan;" onclick="setCurrentColor(0,1,1,1)"></div>
-                <button onclick="setRandomColor()">Random</button>
-            </div>
+      <section class="controls-bar" aria-label="Kontrol playground">
+        <div class="control-group">
+          <label for="shapeSelect">Bentuk Spawn</label>
+          <select id="shapeSelect">
+            <option value="TRIANGLES">Triangle</option>
+            <option value="RECTANGLE">Rectangle</option>
+            <option value="LINE_LOOP">Line shape</option>
+          </select>
         </div>
+        <div class="control-group color-controls">
+          <span class="control-label">Warna</span>
+          <button class="swatch red" aria-label="Warna merah" onclick="setCurrentColor(1,0,0,1)"></button>
+          <button class="swatch green" aria-label="Warna hijau" onclick="setCurrentColor(0,1,0,1)"></button>
+          <button class="swatch blue" aria-label="Warna biru" onclick="setCurrentColor(0,0,1,1)"></button>
+          <button class="swatch cyan" aria-label="Warna cyan" onclick="setCurrentColor(0,1,1,1)"></button>
+          <button class="random" onclick="setRandomColor()">Random</button>
+        </div>
+      </section>
 
-        <div class="panel">
-            <h3>⌨️ Player Control</h3>
-            <p class="instructions">
-                - <b>W, A, S, D</b> / <b>Panah</b>: Gerakkan Kotak Player (State-based)<br>
-                - <b>R</b>: Reset posisi & hapus spawn<br>
-                - <b>C</b>: Ganti warna Player acak (Event-based)
-            </p>
+      <section class="canvas-section">
+        <div class="canvas-heading">
+          <div><span class="section-kicker">LIVE RENDER</span><h2>WebGL Canvas</h2></div>
+          <span id="pause-text" class="status">RUNNING</span>
         </div>
+        <div class="canvas-wrapper">
+          <canvas id="glCanvas" width="800" height="600"></canvas>
+        </div>
+      </section>
+
+      <section class="hud-grid" aria-label="Status render">
+        <div class="hud-card"><span>FPS</span><strong id="hud-fps">0</strong></div>
+        <div class="hud-card"><span>Primitive</span><strong id="hud-prim">11</strong></div>
+        <div class="hud-card"><span>Mouse NDC</span><strong id="hud-mouse">(0.00, 0.00)</strong></div>
+        <div class="hud-card"><span>Spawn Mode</span><strong id="hud-mode">TRIANGLES</strong></div>
+      </section>
+
+      <section class="report-section">
+        <div class="section-header"><h4>Petunjuk Interaksi</h4><h2>Kontrol Playground</h2></div>
+        <div class="instructions-grid">
+          <p><kbd>W A S D</kbd> / <kbd>Arrow</kbd> menggerakkan player.</p>
+          <p><kbd>C</kbd> mengganti warna player.</p>
+          <p><kbd>R</kbd> mereset posisi dan objek spawn.</p>
+          <p><kbd>Space</kbd> pause / resume animasi.</p>
+          <p>Kursor mengikuti mouse sebagai persegi kecil.</p>
+          <p>Klik canvas untuk membuat primitive baru.</p>
+        </div>
+      </section>
+
+      <section class="report-section">
+        <div class="section-header"><h4>Engineering Readme</h4><h2>Struktur Implementasi</h2></div>
+        <div class="readme-grid">
+          <div>
+            <h3 class="readme-title">Rendering Pipeline</h3>
+            <p class="report-text">Program menggunakan WebGL2 dengan satu shader program, interleaved buffer untuk posisi dan warna vertex, serta loop <i>requestAnimationFrame</i>. Warna setiap vertex diteruskan ke fragment shader sehingga menghasilkan interpolasi warna pada primitive.</p>
+          </div>
+          <div class="checklist">
+            <div class="checklist-header"><h3 class="readme-title">Status Spesifikasi</h3><span class="checklist-score">PASS</span></div>
+            <p><span class="check-icon">&#10003;</span> Triangle, rectangle, dan line-based shape</p>
+            <p><span class="check-icon">&#10003;</span> Animasi, keyboard state, dan mouse input</p>
+            <p><span class="check-icon">&#10003;</span> Vertex color dan interpolasi</p>
+          </div>
+        </div>
+      </section>
     </div>
-
-<script src="main.js"></script>
+  </main>
+  <script src="main.js"></script>
 </body>
 </html>
